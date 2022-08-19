@@ -21,6 +21,7 @@ for platform in $PLATFORMS; do \
             COMPRESSED="false"
             APENDED_DTB="false"
             DTBO="true"
+            SOCDTB="waipio-v2.dtb"
             ;;
     esac
 
@@ -65,12 +66,12 @@ for platform in $PLATFORMS; do \
                 if [ $APENDED_DTB = "false" ]; then
                     mkdir -p "$KERNEL_TOP/common-kernel/$device/"
                     # TODO: Be explicit about these names
-                    find "$KERNEL_TMP/arch/arm64/boot/dts/qcom/" -name *.dtb -exec cp {} "$KERNEL_TOP/common-kernel/$device/" \;
+                    cp "$KERNEL_TMP/arch/arm64/boot/dts/qcom/$SOCDTB" "$KERNEL_TOP/common-kernel/$device/"
                 fi
                 if [ $DTBO = "true" ]; then
                     # shellcheck disable=SC2046
                     # note: We want wordsplitting in this case.
-                    $MKDTIMG create "$KERNEL_TOP"/common-kernel/dtbo-${device}.img $(find "$KERNEL_TMP"/arch/arm64/boot/dts/somc/ -name "*.dtbo")
+                    $MKDTIMG create "$KERNEL_TOP"/common-kernel/dtbo-${device}.img $(find "$KERNEL_TMP"/arch/arm64/boot/dts/qcom/ -name "*.dtbo")
                 fi
 
             fi
