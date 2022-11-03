@@ -42,7 +42,7 @@ else
     ANDROID_ROOT="$ANDROID_BUILD_TOP"
 fi
 
-NAGARA="pdx223"
+NAGARA="pdx223 pdx224"
 
 PLATFORMS="nagara"
 
