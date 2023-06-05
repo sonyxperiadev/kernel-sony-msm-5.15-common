@@ -15,20 +15,20 @@ find_repo_root()
 usage(){
     cat <<EOF
 Build kernel for supported devices
-Usage: ${0##*/} [-k -d <device>]
+Usage: ${0##*/} [-k -p <platform>]
 
 Options:
 -k              keep kernel tmp after build
--d <device>     only build the kernel for <device>
+-p <platform>   only build the kernel for <platform>
 EOF
 }
 
 
-arguments=khd:
+arguments=khp:
 while getopts $arguments argument ; do
     case $argument in
         k) keep_kernel_tmp=t ;;
-        d) only_build_for=$OPTARG;;
+        p) only_build_for=$OPTARG;;
         h) usage; exit 0;;
         ?) usage; exit 1;;
     esac
@@ -41,8 +41,6 @@ if [ -z "$ANDROID_BUILD_TOP" ]; then
 else
     ANDROID_ROOT="$ANDROID_BUILD_TOP"
 fi
-
-NAGARA="pdx223 pdx224"
 
 PLATFORMS="nagara"
 
