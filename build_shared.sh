@@ -27,7 +27,9 @@ for platform in $PLATFORMS; do \
             nagara)
                 COMPRESSED="false"
                 DTBO="true"
+                SOC=waipio
                 SOCDTB="waipio-v2.dtb"
+                DEVICES="pdx223 pdx224"
                 ;;
 
             yodo)
@@ -70,18 +72,20 @@ for platform in $PLATFORMS; do \
 
         echo "Copying new kernel image ..."
         cp "$KERNEL_TMP_PLATFORM/arch/arm64/boot/Image$comp$dtb" "$PLATFORM_KERNEL_OUT/kernel$dtb"
+
         if [ "$SOCDTB" ]; then
             mkdir -p "$PLATFORM_KERNEL_OUT/dtb/"
             cp "$KERNEL_TMP_PLATFORM/arch/arm64/boot/dts/qcom/$SOCDTB" "$PLATFORM_KERNEL_OUT/dtb/"
         fi
-        if [ "$DTBO" = "true" ]; then
-            DTBO_OUT="$PLATFORM_KERNEL_OUT/dtbo.img"
-            echo "Creating $DTBO_OUT ..."
-            # shellcheck disable=SC2046
-            # note: We want wordsplitting in this case.
-            $MKDTIMG create $DTBO_OUT $(find "$KERNEL_TMP_PLATFORM/arch/arm64/boot/dts/qcom/" -name "*.dtbo")
-        fi
 
+        if [ "$DTBO" = "true" ]; then
+            for device in $DEVICES; do
+                dtbo="$KERNEL_TMP_PLATFORM/arch/arm64/boot/dts/qcom/${SOC}-${platform}-${device}_generic-overlay.dtbo"
+                dtbo_out="$PLATFORM_KERNEL_OUT/dtbo-${device}.img"
+                echo "Creating $dtbo_out ..."
+                $MKDTIMG create "$dtbo_out" $dtbo
+            done
+        fi
     fi
 done
 
