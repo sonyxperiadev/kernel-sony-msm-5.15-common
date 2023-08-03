@@ -42,7 +42,7 @@ else
     ANDROID_ROOT="$ANDROID_BUILD_TOP"
 fi
 
-PLATFORMS="nagara"
+PLATFORMS="nagara yodo"
 
 # Mkdtimg tool
 MKDTIMG=$ANDROID_ROOT/out/host/linux-x86/bin/mkdtimg

@@ -29,7 +29,14 @@ for platform in $PLATFORMS; do \
                 DTBO="true"
                 SOCDTB="waipio-v2.dtb"
                 ;;
+
+            yodo)
+                COMPRESSED="false"
+                DTBO="true"
+                SOCDTB="kalama-v2.dtb"
+                ;;
         esac
+
 
         if [ "$COMPRESSED" = "true" ]; then
             comp=".gz"
