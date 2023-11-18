@@ -21,6 +21,9 @@ elif [ -d "$CLANG_A11" ]; then
     export CLANG=$CLANG_A11
 fi
 
+CROSS_COMPILE="aarch64-linux-android-"
+CROSS_COMPILE_ARM32="arm-linux-androideabi-"
+
 # Build command
 BUILD_ARGS="LLVM=1 LLVM_IAS=1 CC=clang"
 
