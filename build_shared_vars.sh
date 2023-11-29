@@ -51,6 +51,3 @@ KERNEL_TOP=$ANDROID_ROOT/kernel/sony/msm-5.15
 # $KERNEL_TMP sub dir per script
 c=${0##*-}
 KERNEL_TMP=$ANDROID_ROOT/out/kernel-5.15/${c%%.sh}
-
-export PATH=$PATH:$ANDROID_ROOT/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin
-export PATH=$PATH:$ANDROID_ROOT/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
