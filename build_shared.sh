@@ -35,7 +35,9 @@ for platform in $PLATFORMS; do \
             yodo)
                 COMPRESSED="false"
                 DTBO="true"
+                SOC=kalama
                 SOCDTB="kalama-v2.dtb"
+                DEVICES="pdx234 pdx237"
                 ;;
         esac
 
