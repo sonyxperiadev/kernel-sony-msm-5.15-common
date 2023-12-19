@@ -15,8 +15,8 @@ echo "KERNEL_TMP  : ${KERNEL_TMP}"
 
 BUILD_ARGS="${BUILD_ARGS} \
 ARCH=arm64 \
-CROSS_COMPILE=$CROSS_COMPILE \
-CROSS_COMPILE_ARM32=$CROSS_COMPILE_ARM32 \
+CROSS_COMPILE=aarch64-linux-android- \
+CROSS_COMPILE_ARM32=arm-linux-androideabi- \
 -j$(nproc)"
 
 for platform in $PLATFORMS; do \
