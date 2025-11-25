@@ -45,6 +45,7 @@ trap 'echo -e "\n${0##*/} execution was interrupted by Ctrl+C."; exit 1' SIGINT
 #   - Ensure that ANDROID_ROOT is defined before referencing toolchain paths.
 # -------------------------------------------------------------------------
 declare -A CLANG_VERSIONS=(
+    ['16']="$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r547379/bin/"
     ['15']="$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r522817/bin/"
     ['14']="$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r487747c/bin/"
     ['13']="$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r450784d/bin/"
