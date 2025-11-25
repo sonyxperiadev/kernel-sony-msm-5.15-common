@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # Enable strict error handling:
-#   -e: immediate exit on error
 #   -u: error on unset vars
-set -eu
+#   -o pipefail: fail if any command in a pipeline fails
+# Note: We do NOT use -e because the script handles errors manually.
+set -uo pipefail
 
 # Handle Ctrl+C (SIGINT): print message and exit
 trap 'echo -e "\n${0##*/} execution was interrupted by Ctrl+C."; exit 1' SIGINT
