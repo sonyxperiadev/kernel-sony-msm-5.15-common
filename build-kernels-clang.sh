@@ -11,23 +11,62 @@ trap 'echo -e "\n${0##*/} execution was interrupted by Ctrl+C."; exit 1' SIGINT
 
 . "${0%/*}/build_shared_vars.sh"
 
-CLANG_A11=$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r353983c/bin/
-CLANG_A12=$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r416183b/bin/
-CLANG_A13=$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r450784d/bin/
-CLANG_A14=$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r487747c/bin/
+# -------------------------------------------------------------------------
+# Associative Array: CLANG_VERSIONS
+# -------------------------------------------------------------------------
+# Description:
+#   CLANG_VERSIONS is a Bash associative array that maps each supported
+#   **Android version** to the Clang toolchain used to build that specific
+#   release within the AOSP build environment.
+#
+#   Each key represents an Android OS version (e.g., "16", "15", "14"),
+#   and the associated value provides the full path to the Clang
+#   toolchain's bin/ directory that matches the compiler used for that
+#   Android release.
+#
+# Ordering Requirement:
+#   - The **most recent Android version MUST appear first**.
+#   - Older Android versions must follow in strictly descending order.
+#   - When adding support for a new Android release, insert its entry at
+#     the beginning of the array to maintain correct ordering.
+#
+# Usage:
+#   To retrieve the Clang toolchain path for a given Android version:
+#
+#       clang_path="${CLANG_VERSIONS[$android_version]}"
+#
+#   Example:
+#       android_version="16"
+#       clang_path="${CLANG_VERSIONS[$android_version]}"
+#       echo "Using Clang for Android $android_version: $clang_path"
+#
+# Notes:
+#   - Keys represent Android version numbers, *not* LLVM/Clang major versions.
+#   - Ensure that ANDROID_ROOT is defined before referencing toolchain paths.
+# -------------------------------------------------------------------------
+declare -A CLANG_VERSIONS=(
+    ['14']="$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r487747c/bin/"
+    ['13']="$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r450784d/bin/"
+    ['12']="$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r416183b/bin/"
+    ['11']="$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r353983c/bin/"
+)
 
-if  [ -d "$CLANG_A14" ]; then
-    echo "Using Clang (build r487747c) from Android 14."
-    export CLANG=$CLANG_A14
-elif  [ -d "$CLANG_A13" ]; then
-    echo "Using Clang (build r450784d) from Android 13."
-    export CLANG=$CLANG_A13
-elif  [ -d "$CLANG_A12" ]; then
-    echo "Using Clang (build r416183b) from Android 12."
-    export CLANG=$CLANG_A12
-elif [ -d "$CLANG_A11" ]; then
-    echo "Using Clang (build r353983) from Android 11."
-    export CLANG=$CLANG_A11
+# Iterate through each version and return the first match
+for version in "${!CLANG_VERSIONS[@]}"; do
+    CLANG_PATH="${CLANG_VERSIONS[$version]}"
+    if [ -d "$CLANG_PATH" ]; then
+        BUILD_VERSION=$(basename "$(dirname "$CLANG_PATH")" | sed 's/clang-//')
+        echo "Using Clang (build $BUILD_VERSION) from Android $version."
+        CLANG="$CLANG_PATH"
+        break
+    fi
+done
+
+# Error check if no valid Clang path was found
+# This should never happen
+if [ -z "$CLANG" ]; then
+    echo "Error: No valid Clang path found. Please check your Android root."
+    exit 1
 fi
 
 # Build command
