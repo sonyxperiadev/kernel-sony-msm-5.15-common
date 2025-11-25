@@ -102,6 +102,11 @@ for platform in $PLATFORMS; do \
                 check_error "Failed to create DTBO for device $device using $dtbo"
             done
         fi
+
+        # Normalize permissions. Set all files under $PLATFORM_KERNEL_OUT to 644.
+        # Some files, such as the kernel image, may be marked executable (755) by
+        # the build system.
+        find "$PLATFORM_KERNEL_OUT/" -type f | xargs chmod 644
     fi
 done
 
