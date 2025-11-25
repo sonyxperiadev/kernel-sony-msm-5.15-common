@@ -1,4 +1,12 @@
-#!/bin/sh
+#!/bin/bash
+
+# Enable strict error handling:
+#   -e: immediate exit on error
+#   -u: error on unset vars
+set -eu
+
+# Handle Ctrl+C (SIGINT): print message and exit
+trap 'echo -e "\n${0##*/} execution was interrupted by Ctrl+C."; exit 1' SIGINT
 
 . "${0%/*}/build_shared_vars.sh"
 
