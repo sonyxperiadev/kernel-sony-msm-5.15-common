@@ -30,7 +30,8 @@ elif [ -d "$CLANG_A11" ]; then
 fi
 
 # Build command
-BUILD_ARGS="LLVM=1 LLVM_IAS=1 CC=clang"
+BUILD_ARGS="LLVM=1 LLVM_IAS=1 CC=clang \
+${verbose_output:+KCFLAGS='-fcolor-diagnostics'}"
 
 PATH=$CLANG:$PATH
 # source shared parts

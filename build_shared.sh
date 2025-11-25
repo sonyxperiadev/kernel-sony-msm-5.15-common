@@ -6,6 +6,7 @@
 
 cd "$KERNEL_TOP"/kernel
 
+echo ""
 echo "================================================="
 echo "Your Environment:"
 echo "ANDROID_ROOT: ${ANDROID_ROOT}"
@@ -66,6 +67,10 @@ for platform in $PLATFORMS; do \
         # won't be erroneously copied from a build for a different platform
         find "$KERNEL_TMP_PLATFORM/arch/arm64/boot/dts/{qcom,somc}/" \( -name *.dtb -o -name *.dtbo \) -delete 2>/dev/null || true
 
+        # Truncate the log at the start of the build for a specific platform.
+        : > "$KERNEL_TMP_PLATFORM/build.log"
+
+        echo ""
         echo "================================================="
         echo "Platform -> ${platform}"
 
@@ -73,11 +78,11 @@ for platform in $PLATFORMS; do \
         echo "Building new kernel image ..."
         echo "Logging to $KERNEL_TMP_PLATFORM/build.log"
 
-        # Load the defconfig.
-        $make_cmd aosp_${platform}_defconfig 2>&1;
+        # Load the defconfig, log output.
+        $make_cmd aosp_${platform}_defconfig 2>&1 | log_pipeline
 
         # Run the build, log output.
-        $make_cmd > "$KERNEL_TMP_PLATFORM/build.log" 2>&1;
+        $make_cmd 2>&1 | log_pipeline
 
         echo "Copying new kernel image ..."
         cp "$KERNEL_TMP_PLATFORM/arch/arm64/boot/Image${comp:-}${dtb:-}" "$PLATFORM_KERNEL_OUT/kernel${dtb:-}"
@@ -100,6 +105,6 @@ for platform in $PLATFORMS; do \
     fi
 done
 
-
+echo ""
 echo "================================================="
 echo "Done!"
