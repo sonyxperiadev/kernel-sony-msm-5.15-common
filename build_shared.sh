@@ -1,9 +1,3 @@
-# Check if mkdtimg tool exist
-[ ! -f "$MKDTIMG" ] && MKDTIMG="$ANDROID_ROOT/prebuilts/misc/linux-x86/libufdt/mkdtimg"
-[ ! -f "$MKDTIMG" ] && MKDTIMG="$ANDROID_ROOT/system/libufdt/utils/src/mkdtboimg.py"
-[ ! -f "$MKDTIMG" ] && (echo "No mkdtbo script/executable found"; exit 1)
-
-
 cd "$KERNEL_TOP"/kernel
 
 echo ""
