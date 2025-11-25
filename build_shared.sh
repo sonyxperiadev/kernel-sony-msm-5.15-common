@@ -11,7 +11,8 @@ BUILD_ARGS="${BUILD_ARGS} \
 ARCH=arm64 \
 CROSS_COMPILE=aarch64-linux-gnu- \
 CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
--j$(nproc)"
+-j$(nproc) \
+${UFDT_APPLY_OVERLAY:+DTC_OVERLAY_TEST_EXT=$UFDT_APPLY_OVERLAY}"
 
 for platform in $PLATFORMS; do \
     if [ -z "${only_build_for:-}" ] || [ "$platform" = "${only_build_for:-}" ]; then
