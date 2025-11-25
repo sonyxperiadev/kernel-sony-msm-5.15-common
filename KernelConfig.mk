@@ -22,7 +22,7 @@ ifeq ($(BOARD_INCLUDE_DTB_IN_BOOTIMG), true)
     # AOSP will concatenate all these into a single dtb.img
     BOARD_PREBUILT_DTBIMAGE_DIR := $(PLATFORM_KERNEL_OUT)/dtb/
 else
-    dtb := "-dtb"
+    dtb := -dtb
 endif
 
 ifeq ($(TARGET_NEEDS_DTBOIMAGE),true)
