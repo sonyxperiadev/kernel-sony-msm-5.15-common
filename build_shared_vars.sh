@@ -174,6 +174,14 @@ if [ ! -x "$MKDTIMG" ]; then
     exit 1
 fi
 
+# UFDT apply overlay tool. Optional
+# ufdt_apply_overlay verifies that the device tree overlay (DTO) can be applied to
+# the base device tree blob (DTB) without errors, ensuring correct configuration.
+UFDT_APPLY_OVERLAY=$ANDROID_ROOT/prebuilts/misc/linux-x86/libufdt/ufdt_apply_overlay
+if [ ! -x "$UFDT_APPLY_OVERLAY" ]; then
+    UFDT_APPLY_OVERLAY=""
+fi
+
 KERNEL_TOP=$ANDROID_ROOT/kernel/sony/msm-5.15
 # $KERNEL_TMP sub dir per script
 c=${0##*-}
