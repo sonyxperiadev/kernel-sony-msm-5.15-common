@@ -1,4 +1,3 @@
-set -e
 # Check if mkdtimg tool exist
 [ ! -f "$MKDTIMG" ] && MKDTIMG="$ANDROID_ROOT/prebuilts/misc/linux-x86/libufdt/mkdtimg"
 [ ! -f "$MKDTIMG" ] && MKDTIMG="$ANDROID_ROOT/system/libufdt/utils/src/mkdtboimg.py"
@@ -20,8 +19,7 @@ CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
 -j$(nproc)"
 
 for platform in $PLATFORMS; do \
-
-    if [ ! $only_build_for ] || [ $platform = $only_build_for ] ; then
+    if [ -z "${only_build_for:-}" ] || [ "$platform" = "${only_build_for:-}" ]; then
 
         case $platform in
             nagara)
@@ -41,24 +39,24 @@ for platform in $PLATFORMS; do \
                 ;;
         esac
 
-
-        if [ "$COMPRESSED" = "true" ]; then
+        if [ "${COMPRESSED:-}" = "true" ]; then
             comp=".gz"
         fi
-        if [ ! "$SOCDTB" ]; then
+        if [ -z "${SOCDTB:-}" ]; then
             dtb="-dtb"
         fi
 
-        # Don't override $KERNEL_TMP when set by manually
-        if [ ! "$build_directory" ] ; then
-            KERNEL_TMP_PLATFORM=$KERNEL_TMP/${platform}
-        else
-            KERNEL_TMP_PLATFORM=${build_directory}
-        fi
-        BUILD_ARGS_PLATFORM="$BUILD_ARGS O=$KERNEL_TMP_PLATFORM"
+        # Set KERNEL_TMP_PLATFORM to either the value of build_directory (if set)
+        # or default to $KERNEL_TMP/${platform} if build_directory is unset or empty.
+        KERNEL_TMP_PLATFORM=${build_directory:-$KERNEL_TMP/${platform}}
+
+        # Construct the 'make' command with build arguments and specify the output
+        # directory for the kernel build. It is used for both loading the defconfig
+        # and performing the build process.
+        make_cmd="make $BUILD_ARGS O=$KERNEL_TMP_PLATFORM"
 
         # Keep kernel tmp when building for a specific platform or when using keep tmp
-        [ ! "$keep_kernel_tmp" ] && [ ! "$only_build_for" ] && rm -rf "${KERNEL_TMP_PLATFORM}"
+        [ "${keep_kernel_tmp:-}" != "true" ] && [ -z "${only_build_for:-}" ] && rm -rf "${KERNEL_TMP_PLATFORM}"
         mkdir -p "${KERNEL_TMP_PLATFORM}"
 
         PLATFORM_KERNEL_OUT=$KERNEL_TOP/common-kernel/$platform
@@ -70,22 +68,28 @@ for platform in $PLATFORMS; do \
 
         echo "================================================="
         echo "Platform -> ${platform}"
-        make $BUILD_ARGS_PLATFORM aosp_${platform}_defconfig
 
         echo "The build may take up to 10 minutes. Please be patient ..."
         echo "Building new kernel image ..."
         echo "Logging to $KERNEL_TMP_PLATFORM/build.log"
-        make $BUILD_ARGS_PLATFORM >"$KERNEL_TMP_PLATFORM/build.log" 2>&1;
+
+        # Load the defconfig.
+        $make_cmd aosp_${platform}_defconfig 2>&1;
+
+        # Run the build, log output.
+        $make_cmd > "$KERNEL_TMP_PLATFORM/build.log" 2>&1;
 
         echo "Copying new kernel image ..."
-        cp "$KERNEL_TMP_PLATFORM/arch/arm64/boot/Image$comp$dtb" "$PLATFORM_KERNEL_OUT/kernel$dtb"
+        cp "$KERNEL_TMP_PLATFORM/arch/arm64/boot/Image${comp:-}${dtb:-}" "$PLATFORM_KERNEL_OUT/kernel${dtb:-}"
 
-        if [ "$SOCDTB" ]; then
+        # If SOCDTB is specified, copy DTB files to the output directory.
+        if [ -n "${SOCDTB:-}" ]; then
             mkdir -p "$PLATFORM_KERNEL_OUT/dtb/"
             cp "$KERNEL_TMP_PLATFORM/arch/arm64/boot/dts/qcom/$SOCDTB" "$PLATFORM_KERNEL_OUT/dtb/"
         fi
 
-        if [ "$DTBO" = "true" ]; then
+        # If DTBO creation is enabled, generate DTBO files for each device.
+        if [ "${DTBO:-}" = "true" ]; then
             for device in $DEVICES; do
                 dtbo="$KERNEL_TMP_PLATFORM/arch/arm64/boot/dts/qcom/${SOC}-${platform}-${device}_generic-overlay.dtbo"
                 dtbo_out="$PLATFORM_KERNEL_OUT/dtbo-${device}.img"

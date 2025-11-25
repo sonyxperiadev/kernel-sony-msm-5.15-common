@@ -28,7 +28,7 @@ EOF
 arguments=khp:O:
 while getopts $arguments argument ; do
     case $argument in
-        k) keep_kernel_tmp=t ;;
+        k) keep_kernel_tmp=true ;;
         p) only_build_for=$OPTARG;;
         O) build_directory=$OPTARG;;
         h) usage; exit 0;;
@@ -36,7 +36,7 @@ while getopts $arguments argument ; do
     esac
 done
 
-if [ -z "$ANDROID_BUILD_TOP" ]; then
+if [ -z "${ANDROID_BUILD_TOP:-}" ]; then
     ANDROID_ROOT=$(find_repo_root)
     ANDROID_ROOT=$(realpath "$ANDROID_ROOT")
     echo "ANDROID_BUILD_TOP not set, guessing root at $ANDROID_ROOT"
