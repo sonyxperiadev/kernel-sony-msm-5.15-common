@@ -78,19 +78,23 @@ for platform in $PLATFORMS; do \
         echo "Building new kernel image ..."
         echo "Logging to $KERNEL_TMP_PLATFORM/build.log"
 
-        # Load the defconfig, log output.
+        # Load the defconfig, log output, and check for errors.
         $make_cmd aosp_${platform}_defconfig 2>&1 | log_pipeline
+        check_error "Can't find aosp_${platform}_defconfig."
 
-        # Run the build, log output.
+        # Run the build, log output, and check for errors.
         $make_cmd 2>&1 | log_pipeline
+        check_error "Build failed. See $KERNEL_TMP_PLATFORM/build.log for details."
 
         echo "Copying new kernel image ..."
         cp "$KERNEL_TMP_PLATFORM/arch/arm64/boot/Image${comp:-}${dtb:-}" "$PLATFORM_KERNEL_OUT/kernel${dtb:-}"
+        check_error "Failed to copy kernel image to $PLATFORM_KERNEL_OUT/"
 
         # If SOCDTB is specified, copy DTB files to the output directory.
         if [ -n "${SOCDTB:-}" ]; then
             mkdir -p "$PLATFORM_KERNEL_OUT/dtb/"
             cp "$KERNEL_TMP_PLATFORM/arch/arm64/boot/dts/qcom/$SOCDTB" "$PLATFORM_KERNEL_OUT/dtb/"
+            check_error "Failed to copy $SOCDTB to $PLATFORM_KERNEL_OUT/dtb/"
         fi
 
         # If DTBO creation is enabled, generate DTBO files for each device.
@@ -100,6 +104,7 @@ for platform in $PLATFORMS; do \
                 dtbo_out="$PLATFORM_KERNEL_OUT/dtbo-${device}.img"
                 echo "Creating $dtbo_out ..."
                 $MKDTIMG create "$dtbo_out" $dtbo
+                check_error "Failed to create DTBO for device $device using $dtbo"
             done
         fi
     fi

@@ -1,4 +1,44 @@
 # -------------------------------------------------------------------------
+# Function: check_error
+# -------------------------------------------------------------------------
+# Description:
+# This function checks the exit status of the last executed command. If the
+# command failed (non-zero exit status), it prints an error message in red
+# and exits the script with a status code of `1`. If the last command was
+# part of a pipeline, the first command in the pipeline is checked.
+
+# Usage:
+#   check_error "Custom error message"
+
+# Returns:
+#   - Prints an error message if the last command failed and exits
+#     with status code `1`.
+#   - Does nothing if the last command was successful.
+
+# Parameters:
+#   - $1 (optional): A custom error message. If not provided, the default
+#     message `"Command failed"` is used.
+
+# Example:
+#   some_command
+#   check_error "Failed to execute some_command"
+# -------------------------------------------------------------------------
+check_error() {
+    local exit_code=$?
+    local message=${1:-"Command failed"}
+
+    # If PIPESTATUS exists and has more than 1 element, we are in a pipeline
+    if [ "${#PIPESTATUS[@]}" -gt 1 ]; then
+        exit_code=${PIPESTATUS[0]}
+    fi
+
+    if [ "$exit_code" -ne 0 ]; then
+        echo -e "\e[1;31mError:\e[0m $message" >&2
+        exit 1
+    fi
+}
+
+# -------------------------------------------------------------------------
 # Function: find_repo_root
 # -------------------------------------------------------------------------
 # Description:
@@ -118,6 +158,7 @@ done
 
 if [ -z "${ANDROID_BUILD_TOP:-}" ]; then
     ANDROID_ROOT=$(find_repo_root)
+    check_error "Unable to find the repository root folder. Please check your Android root."
     ANDROID_ROOT=$(realpath "$ANDROID_ROOT")
     echo "ANDROID_BUILD_TOP not set, guessing root at $ANDROID_ROOT"
 else
