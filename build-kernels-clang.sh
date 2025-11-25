@@ -49,8 +49,6 @@ declare -A CLANG_VERSIONS=(
     ['15']="$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r522817/bin/"
     ['14']="$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r487747c/bin/"
     ['13']="$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r450784d/bin/"
-    ['12']="$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r416183b/bin/"
-    ['11']="$ANDROID_ROOT/prebuilts/clang/host/linux-x86/clang-r353983c/bin/"
 )
 
 # Iterate through each version and return the first match
