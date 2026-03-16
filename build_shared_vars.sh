@@ -197,7 +197,6 @@ KERNEL_TMP=${build_directory:-$ANDROID_ROOT/out/kernel-5.15/${c%%.sh}}
 #
 #   These variables may include:
 #     - COMPRESSED: Whether the kernel image should be compressed (true/false)
-#     - DTBO:       Whether a DTBO image should be generated (true/false)
 #     - SOC:        The SoC identifier used by the platform
 #     - SOCDTB:     The base SoC .dtb filename
 #     - DEVICES:    List of device identifiers belonging to the platform
@@ -221,14 +220,12 @@ KERNEL_TMP=${build_directory:-$ANDROID_ROOT/out/kernel-5.15/${c%%.sh}}
 declare -A PLATFORMS=(
     ['nagara']="
         COMPRESSED=false
-        DTBO=true
         SOC='waipio'
         SOCDTB='waipio-v2.dtb'
         DEVICES='pdx223 pdx224'
     "
     ['yodo']="
         COMPRESSED=false
-        DTBO=true
         SOC='kalama'
         SOCDTB='kalama-v2.dtb'
         DEVICES='pdx234 pdx237'

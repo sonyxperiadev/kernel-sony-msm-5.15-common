@@ -80,16 +80,14 @@ for platform in "${!PLATFORMS[@]}"; do
             check_error "Failed to copy $SOCDTB to $PLATFORM_KERNEL_OUT/dtb/"
         fi
 
-        # If DTBO creation is enabled, generate DTBO files for each device.
-        if [ "${DTBO:-}" = "true" ]; then
-            for device in $DEVICES; do
-                dtbo="$KERNEL_TMP_PLATFORM/arch/arm64/boot/dts/qcom/${SOC}-${platform}-${device}_generic-overlay.dtbo"
-                dtbo_out="$PLATFORM_KERNEL_OUT/dtbo-${device}.img"
-                echo "Creating $dtbo_out ..."
-                $MKDTIMG create "$dtbo_out" $dtbo
-                check_error "Failed to create DTBO for device $device using $dtbo"
-            done
-        fi
+        # Generate DTBO files for each device.
+        for device in $DEVICES; do
+            dtbo="$KERNEL_TMP_PLATFORM/arch/arm64/boot/dts/qcom/${SOC}-${platform}-${device}_generic-overlay.dtbo"
+            dtbo_out="$PLATFORM_KERNEL_OUT/dtbo-${device}.img"
+            echo "Creating $dtbo_out ..."
+            $MKDTIMG create "$dtbo_out" $dtbo
+            check_error "Failed to create DTBO for device $device using $dtbo"
+        done
 
         # Normalize permissions. Set all files under $PLATFORM_KERNEL_OUT to 644.
         # Some files, such as the kernel image, may be marked executable (755) by
