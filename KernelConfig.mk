@@ -12,26 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-BUILD_KERNEL := false
-
-ifeq ($(BUILD_KERNEL),false)
+ifeq ($(BUILD_KERNEL), false)
 
 PLATFORM_KERNEL_OUT := $(KERNEL_PATH)/common-kernel/$(PRODUCT_PLATFORM)
 
-ifeq ($(BOARD_INCLUDE_DTB_IN_BOOTIMG), true)
-    # AOSP will concatenate all these into a single dtb.img
-    BOARD_PREBUILT_DTBIMAGE_DIR := $(PLATFORM_KERNEL_OUT)/dtb/
-else
-    dtb := -dtb
-endif
-
-ifeq ($(TARGET_NEEDS_DTBOIMAGE),true)
-    BOARD_PREBUILT_DTBOIMAGE := $(PLATFORM_KERNEL_OUT)/dtbo-$(TARGET_DEVICE).img
-endif
-
-LOCAL_KERNEL := $(PLATFORM_KERNEL_OUT)/kernel$(dtb)
+BOARD_PREBUILT_DTBIMAGE_DIR := $(PLATFORM_KERNEL_OUT)/dtb/
+BOARD_PREBUILT_DTBOIMAGE := $(PLATFORM_KERNEL_OUT)/dtbo-$(TARGET_DEVICE).img
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_KERNEL):kernel
+    $(PLATFORM_KERNEL_OUT)/kernel:kernel
 
 endif
