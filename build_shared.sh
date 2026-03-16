@@ -37,7 +37,7 @@ for platform in "${!PLATFORMS[@]}"; do
         make_cmd="make $BUILD_ARGS O=$KERNEL_TMP_PLATFORM"
 
         # Keep kernel tmp when building for a specific platform or when using keep tmp
-        [ "${keep_kernel_tmp:-}" != "true" ] && [ -z "${only_build_for:-}" ] && rm -rf "${KERNEL_TMP_PLATFORM}"
+        [ "${keep_kernel_tmp:-}" != "true" ] && rm -rf "${KERNEL_TMP_PLATFORM}"
         mkdir -p "${KERNEL_TMP_PLATFORM}"
 
         PLATFORM_KERNEL_OUT=$KERNEL_TOP/common-kernel/$platform
