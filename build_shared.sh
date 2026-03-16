@@ -26,9 +26,6 @@ for platform in "${!PLATFORMS[@]}"; do
         if [ "${COMPRESSED:-}" = "true" ]; then
             comp=".gz"
         fi
-        if [ -z "${SOCDTB:-}" ]; then
-            dtb="-dtb"
-        fi
 
         # Set KERNEL_TMP_PLATFORM to either the value of build_directory (if set)
         # or default to $KERNEL_TMP/${platform} if build_directory is unset or empty.
@@ -70,7 +67,7 @@ for platform in "${!PLATFORMS[@]}"; do
         check_error "Build failed. See $KERNEL_TMP_PLATFORM/build.log for details."
 
         echo "Copying new kernel image ..."
-        cp "$KERNEL_TMP_PLATFORM/arch/arm64/boot/Image${comp:-}${dtb:-}" "$PLATFORM_KERNEL_OUT/kernel${dtb:-}"
+        cp "$KERNEL_TMP_PLATFORM/arch/arm64/boot/Image${comp:-}" "$PLATFORM_KERNEL_OUT/kernel"
         check_error "Failed to copy kernel image to $PLATFORM_KERNEL_OUT/"
 
         # Copy DTB files to the output directory.
