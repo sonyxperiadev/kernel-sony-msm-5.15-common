@@ -73,12 +73,10 @@ for platform in "${!PLATFORMS[@]}"; do
         cp "$KERNEL_TMP_PLATFORM/arch/arm64/boot/Image${comp:-}${dtb:-}" "$PLATFORM_KERNEL_OUT/kernel${dtb:-}"
         check_error "Failed to copy kernel image to $PLATFORM_KERNEL_OUT/"
 
-        # If SOCDTB is specified, copy DTB files to the output directory.
-        if [ -n "${SOCDTB:-}" ]; then
-            mkdir -p "$PLATFORM_KERNEL_OUT/dtb/"
-            cp "$KERNEL_TMP_PLATFORM/arch/arm64/boot/dts/qcom/$SOCDTB" "$PLATFORM_KERNEL_OUT/dtb/"
-            check_error "Failed to copy $SOCDTB to $PLATFORM_KERNEL_OUT/dtb/"
-        fi
+        # Copy DTB files to the output directory.
+        mkdir -p "$PLATFORM_KERNEL_OUT/dtb/"
+        cp "$KERNEL_TMP_PLATFORM/arch/arm64/boot/dts/qcom/$SOCDTB" "$PLATFORM_KERNEL_OUT/dtb/"
+        check_error "Failed to copy $SOCDTB to $PLATFORM_KERNEL_OUT/dtb/"
 
         # Generate DTBO files for each device.
         for device in $DEVICES; do
