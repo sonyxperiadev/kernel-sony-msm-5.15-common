@@ -181,9 +181,7 @@ if [ ! -x "$UFDT_APPLY_OVERLAY" ]; then
 fi
 
 KERNEL_TOP=$ANDROID_ROOT/kernel/sony/msm-5.15
-# $KERNEL_TMP sub dir per script
-c=${0##*-}
-KERNEL_TMP=${build_directory:-$ANDROID_ROOT/out/kernel-5.15/${c%%.sh}}
+KERNEL_TMP=${build_directory:-$ANDROID_ROOT/out/kernel-5.15}
 
 # -------------------------------------------------------------------------
 # Associative Array: PLATFORMS
