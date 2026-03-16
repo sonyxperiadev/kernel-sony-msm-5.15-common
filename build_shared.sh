@@ -71,14 +71,21 @@ for platform in "${!PLATFORMS[@]}"; do
         check_error "Failed to copy kernel image to $PLATFORM_KERNEL_OUT/"
 
         # Copy DTB files to the output directory.
-        mkdir -p "$PLATFORM_KERNEL_OUT/dtb/"
-        cp "$KERNEL_TMP_PLATFORM/arch/arm64/boot/dts/qcom/$SOCDTB" "$PLATFORM_KERNEL_OUT/dtb/"
-        check_error "Failed to copy $SOCDTB to $PLATFORM_KERNEL_OUT/dtb/"
+        dtb="$KERNEL_TMP_PLATFORM/arch/arm64/boot/dts/qcom/$SOCDTB"
+        dtb_out="$PLATFORM_KERNEL_OUT/dtb/"
+        mkdir -p "$dtb_out"
+        cp "$dtb" "$dtb_out"
+        check_error "Failed to copy $SOCDTB to $dtb_out."
 
         # Generate DTBO files for each device.
         for device in $DEVICES; do
             dtbo="$KERNEL_TMP_PLATFORM/arch/arm64/boot/dts/qcom/${SOC}-${platform}-${device}_generic-overlay.dtbo"
             dtbo_out="$PLATFORM_KERNEL_OUT/dtbo-${device}.img"
+
+            # Validate the generated DTBO to ensure there are no errors before creating dtbo.img.
+            $UFDT_APPLY_OVERLAY "$dtb" "$dtbo" /dev/null
+            check_error "Failed to validate DTBO for device $device using $dtbo."
+
             echo "Creating $dtbo_out ..."
             $MKDTIMG create "$dtbo_out" $dtbo
             check_error "Failed to create DTBO for device $device using $dtbo"
